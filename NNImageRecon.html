@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Classifier & Style Transfer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Load TensorFlow.js and Bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.8.0/dist/tf.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Image Classifier</h2>
+        <p>Select an image file and click the "Classify" button to predict whether the image is a cat or a dog.</p>
+        <div class="form-group">
+          <input type="file" accept="image/*" class="form-control-file" id="imageInput">
+        </div>
+        <button type="button" class="btn btn-primary mb-2" id="classifyButton" disabled>Classify</button>
+        <div id="result"></div>
+        <img src="" class="img-fluid mt-2" id="inputImage">
+      </div>
+      <div class="col-md-6">
+        <h2>Style Transfer</h2>
+        <p>Click the "Stylize" button to generate a new stylized image based on the uploaded image.</p>
+        <div class="form-group">
+          <input type="file" accept="image/*" class="form-control-file" id="styleInput">
+        </div>
+        <button type="button" class="btn btn-primary mb-2" id="stylizeButton" disabled>Stylize</button>
+        <img src="" class="img-fluid mt-2" id="outputImage">
+      </div>
+    </div>
+  </div>
+  <div class="progress" style="height: 30px; display: none;">
+    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+  </div>
+  <script>
+    // Load the MobileNet classification model
+    let classifier;
+    tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/model.json').then(model => {
+      classifier = model;
+      // Load the style transfer model
+      tf.loadGraphModel('https://storage.googleapis.com/tfjs-models/savedmodel/mobilenet_v2_1.0_224_inat_bird_style/model.json').then(styleTransfer => {
+        // Enable the "Classify" button when an image file is selected
+        const imageInput = document.getElementById('imageInput');
+        const classifyButton = document.getElementById('classifyButton');
+        const resultElement = document.getElementById('result');
+        const inputImageElement = document.getElementById('inputImage');    imageInput.addEventListener('change', () => {
+      const file = imageInput.files[0];
+      if (file) {
+        // Show the input image and enable the "Classify" button
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          const dataUrl = reader.result;
+          inputImageElement.src = dataUrl;
+          classifyButton.disabled = false;
+          resultElement.innerHTML = '';
+        };
+      }
+    });
+
+    // Perform image classification when the "Classify" button is clicked
+    classifyButton.addEventListener('click', async () => {
+      // Disable the "Classify" button and show the progress bar
+      classifyButton.disabled = true;
+      const progressBar = document.querySelector('.progress');
+      const progressBarElement = progressBar.querySelector('.progress-bar');
+      progressBar.style.display = 'block';
+      progressBarElement.style.width = '0%';
+      progressBarElement.innerHTML = '0%';
+
+      // Load the image from the input element
+      const inputImage = inputImageElement;
+      const image = tf.browser.fromPixels(inputImage);
+
+      // Preprocess the image for MobileNet
+      const meanImageNetRGB = tf.tensor1d([123.68, 116.779, 103.939]);
+      const processedImage = image.toFloat().sub(meanImageNetRGB).reverse(-1);
+
+      // Make a prediction through MobileNet
+      const predictions = await classifier.predict(processedImage.expandDims());
+
+      // Show the classification result
+      const top5 = Array.from(predictions.argMax(1).dataSync())
+          .map(index => ({label: IMAGENET_CLASSES[index], score: predictions.max(1).dataSync()[index]}))
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 5);
+      resultElement.innerHTML = top5.map(x => `${x.label}: ${(x.score * 100).toFixed(2)}%`).join('<br>');
+
+      // Enable the "Classify" button and hide the progress bar
+      classifyButton.disabled = false;
+      progressBar.style.display = 'none';
+    });
+
+    // Enable the "Stylize" button when an image file is selected
+    const styleInput = document.getElementById('styleInput');
+    const stylizeButton = document.getElementById('stylizeButton');
+    const outputImageElement = document.getElementById('outputImage');
+    styleInput.addEventListener('change', () => {
+      const file = styleInput.files[0];
+      if (file) {
+        // Enable the "Stylize" button and show the selected style image
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          const dataUrl = reader.result;
+          stylizeButton.disabled = false;
+          outputImageElement.src = dataUrl;
+        };
+      }
+    });
+
+    // Perform style transfer when the "Stylize" button is clicked
+    stylizeButton.addEventListener('click', async () => {
+      // Disable the "Stylize" button and show the progress bar
+      stylizeButton.disabled = true;
+      const progressBar = document.querySelector('.progress');
+      const progressBarElement = progressBar.querySelector('.progress-bar');
+      progressBar.style.display = 'block';
+      progressBarElement.style.width = '0%';
+      progressBarElement.innerHTML = '0%';
+
+      // Load the images from the input and output elements
+      const inputImage = inputImageElement;
+      const styleImage = outputImageElement;
+
+      // Preprocess the images for the style transfer model
+      const input = tf.browser.fromPixels(inputImage).toFloat().div(tf.scalar(255));
+      const style = tf.browser.fromPixels(styleImage).toFloat().div(tf.scalar(255));
+      const meanImageNetRGB      const meanImageNetRGB = tf.tensor1d([123.68, 116.779, 103.939]);
+      const inputScaled = input.sub(meanImageNetRGB);
+      const styleScaled = style.sub(meanImageNetRGB);
+
+      // Run the style transfer model
+      const stylized = await tf.tidy(() => {
+        const stylized = model.transfer(inputScaled, styleScaled, styleRatioInput.valueAsNumber);
+        return stylized;
+      });
+
+      // Show the stylized image
+      outputImageElement.src = await tf.browser.toPixels(stylized);
+      outputImageElement.style.display = 'block';
+
+      // Enable the "Stylize" button and hide the progress bar
+      stylizeButton.disabled = false;
+      progressBar.style.display = 'none';
+    });
+
+    // Update the style transfer model's style ratio when the input changes
+    const styleRatioInput = document.getElementById('styleRatioInput');
+    const styleRatioOutput = document.getElementById('styleRatioOutput');
+    styleRatioInput.addEventListener('input', () => {
+      styleRatioOutput.textContent = `${styleRatioInput.valueAsNumber}% style / ${(100 - styleRatioInput.valueAsNumber)}% content`;
+    });
+  // Listen for changes to the file input and load the selected image
+  const fileInput = document.getElementById('fileInput');
+  fileInput.addEventListener('change', async () => {
+    // Hide the previous output image
+    outputImageElement.style.display = 'none';
+
+    // Get the selected file and create a URL for it
+    const file = fileInput.files[0];
+    const imageURL = URL.createObjectURL(file);
+
+    // Load the image using the URL and update the input image element's source
+    const imageElement = document.getElementById('inputImageElement');
+    imageElement.src = imageURL;
+
+    // Wait for the image to load
+    await new Promise(resolve => imageElement.onload = resolve);
+
+    // Resize the input image to match the expected model input shape
+    const input = tf.browser.fromPixels(imageElement).toFloat();
+    const size = Math.min(input.shape[0], input.shape[1]);
+    const height = Math.round(input.shape[0] / size * modelInputSize);
+    const width = Math.round(input.shape[1] / size * modelInputSize);
+    const resized = tf.image.resizeBilinear(input, [height, width]).clipByValue(0, 255).div(255);
+
+    // Stylize the image using the current style
+    stylizeButton.click();
+  });
+}
+window.addEventListener('DOMContentLoaded', run);
+})();
+</script>
+
+</body>
+</html>
+
+       
