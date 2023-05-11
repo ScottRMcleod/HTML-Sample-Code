@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Budget Calculator</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/ce6cdaf3bb.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h4>Budget Calculator</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="budget-form">
+                            <div class="form-group">
+                                <label for="income">Monthly Income</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" class="form-control" id="income" placeholder="Enter Monthly Income">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="housing">Housing</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" class="form-control expense" id="housing" placeholder="Enter Housing Expense">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="utilities">Utilities</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" class="form-control expense" id="utilities" placeholder="Enter Utilities Expense">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="food">Food</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" class="form-control expense" id="food" placeholder="Enter Food Expense">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="transportation">Transportation</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" class="form-control expense" id="transportation" placeholder="Enter Transportation Expense">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="miscellaneous">Miscellaneous</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" class="form-control expense" id="miscellaneous" placeholder="Enter Miscellaneous Expense">
+                                </div>
+                            </div>
+                            <divclass="form-group">
+<label for="total">Total Monthly Expenses</label>
+<div class="input-group">
+<div class="input-group-prepend">
+<span class="input-group-text">$</span>
+</div>
+<input type="text" class="form-control" id="total" readonly>
+</div>
+</div>
+<button type="button" class="btn btn-primary" onclick="calculateTotal()">Calculate Total</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+    function calculateTotal() {
+        let housing = parseInt(document.getElementById("housing").value);
+        let utilities = parseInt(document.getElementById("utilities").value);
+        let food = parseInt(document.getElementById("food").value);
+        let transportation = parseInt(document.getElementById("transportation").value);
+        let entertainment = parseInt(document.getElementById("entertainment").value);
+        let miscellaneous = parseInt(document.getElementById("miscellaneous").value);
+        let total = housing + utilities + food + transportation + entertainment + miscellaneous;
+        document.getElementById("total").value = total;
+    }
+</script>
+</body>
+</html>
