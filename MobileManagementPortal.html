@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Mobile Device Management Portal</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Device Management Portal</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Dashboard</a></li>
+      <li><a href="#">Devices</a></li>
+      <li><a href="#">Policies</a></li>
+      <li><a href="#">Profiles</a></li>
+      <li><a href="#">Reports</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Devices Enrolled</div>
+        <div class="panel-body">
+          <h2>50</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Most Used Apps</div>
+        <div class="panel-body">
+          <ul>
+            <li>Google Chrome</li>
+            <li>Microsoft Outlook</li>
+            <li>Slack</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Devices Not Updated</div>
+        <div class="panel-body">
+          <ul>
+            <li>Device 1</li>
+            <li>Device 2</li>
+            <li>Device 3</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <h2>Devices</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Device Name</th>
+        <th>Status</th>
+        <th>OS</th>
+        <th>Last Updated</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Device 1</td>
+        <td>Enrolled</td>
+        <td>iOS</td>
+        <td>2022-05-01</td>
+        <td>
+          <a href="#">Lock</a> |
+          <a href="#">Wipe</a> |
+          <a href="#">Push Profile</a>
+        </td>
+      </tr>
+      <tr>
+        <td>Device 2</td>
+        <td>Enrolled</td>
+        <td>Android</td>
+        <td>2022-04-30</td>
+        <td>
+          <a href="#">Lock</a> |
+          <a href="#">Wipe</a> |
+          <a href="#">Push Profile</a>
+        </td>
+      </tr>
+      <tr>
+        <td>Device 3</td>
+        <td>Enrolled</td>
+<td>iOS</td>
+<td>2022-04-29</td>
+<td>
+<a href="#">Lock</a> |
+<a href="#">Wipe</a> |
+<a href="#">Push Profile</a>
+</td>
+</tr>
+</tbody>
+
+  </table>
+</div>
+<div class="container">
+  <h2>Policies</h2>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Password Policy</div>
+        <div class="panel-body">
+          <form>
+            <div class="form-group">
+              <label for="policy-name">Policy Name</label>
+              <input type="text" class="form-control" id="policy-name">
+            </div>
+            <div class="form-group">
+              <label for="password-length">Minimum Password Length</label>
+              <input type="number" class="form-control" id="password-length">
+            </div>
+            <div class="form-group">
+              <label for="password-complexity">Password Complexity</label>
+              <select class="form-control" id="password-complexity">
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-default">Save Policy</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Network Policy</div>
+        <div class="panel-body">
+          <form>
+            <div class="form-group">
+              <label for="policy-name">Policy Name</label>
+              <input type="text" class="form-control" id="policy-name">
+            </div>
+            <div class="form-group">
+              <label for="network-type">Network Type</label>
+              <select class="form-control" id="network-type">
+                <option>Wi-Fi</option>
+                <option>Cellular</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="network-security">Security Type</label>
+              <select class="form-control" id="network-security">
+                <option>WPA2</option>
+                <option>WPA3</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-default">Save Policy</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <h2>Reports</h2>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Devices by OS</div>
+        <div class="panel-body">
+          <canvas id="devices-by-os-chart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Devices by Status</div>
+        <div class="panel-body">
+          <canvas id="devices-by-status-chart"></canvas>
+        </div>
+     
+</div>
+    </div>
+  </div>
+</div>
+</html>
