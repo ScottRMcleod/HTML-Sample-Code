@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Device Registration Chart</title>
+    <!-- Include Bootstrap stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" />
+    <!-- Include custom stylesheet for the admin portal -->
+    <link rel="stylesheet" href="styles.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/easy-pie-chart/2.1.6/jquery.easypiechart.min.js"></script>
+  
+<style>
+    body {
+      padding-top: 70px;
+    }
+    .sidebar {
+      background-color: #f5f5f5;
+      height: 100%;
+      position: fixed;
+      left: 0;
+      overflow-x: hidden;
+      padding-top: 20px;
+      top: 51px;
+      transition: all 0.25s ease;
+      width: 0;
+      z-index: 1;
+    }
+    .collapsed #sidebar {
+      width: 60px;
+    }
+    .collapsed #main {
+      margin-left: 60px;
+    }
+    .nav-sidebar li a {
+      padding: 20px;
+    }
+    .nav-sidebar li a i {
+      font-size: 24px;
+    }
+    .nav-sidebar li.active a {
+      background-color: #e7e7e7;
+    }
+    .main {
+      transition: all 0.25s ease;
+    }
+    .percent {
+      display: block;
+      font-size: 48px;
+      margin-top: 24px;
+      text-align: center;
+    }
+  </style>
+  <script>
+    $(function() {
+      // Initialize the EasyPieChart instances
+      $('.easypiechart').easyPieChart({
+        barColor: '#428bca', // Set the color of the chart
+        lineWidth: 6, // Set the line width of the chart
+        size: 150 // Set the size of the chart
+      });
+
+      // Toggle the sidebar
+      $('#sidebar-toggle').on('click', function() {
+        var sidebarCollapsed = !$('#sidebar').hasClass('collapsed');
+        $('#sidebar').toggleClass('collapsed', sidebarCollapsed);
+        $('#main').toggleClass('col-md-12 col-md-9', sidebarCollapsed);
+      });
+    });
+  </script>
+  
+
+</head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Admin Portal</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Devices</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Users</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container-fluid mt-5">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Registered Devices</h5>
+              <p class="card-text">This chart shows the percentage of registered devices over time.</p>
+			<div class="row">
+					<div class="col-md-3">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Devices Managed</h3>
+							</div>		
+								<div class="panel-body">
+									<div class="easypiechart percent" data-percent="75">
+									<span class="percent">75%</span>
+									</div>
+								</div>
+						</div>
+					</div>
+				</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Compliant Devices</h5>
+              <p class="card-text">This chart shows the percentage of devices that are currently compliant with company policies.</p>
+              <canvas id="compliant-chart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Enrollment Status</h5>
+              <p class="card-text">This chart shows the number of devices that are currently enrolled in the MDM program.</p>
+              <canvas id="enrollment-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Include Bootstrap and Chart.js scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <script>
+      // Sample data for the charts
+      var registrationData = {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+        datasets: [{
+          label: "Registered Devices",
+          data: [10, 20, 30, 25, 35, 40, 50],
+          backgroundColor:      'rgba(54, 162, 235, 0.2)',
+      'rgba(255, 206, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(255, 159, 64, 0.2)'
+    ],
+    borderColor: [
+      'rgba(54, 162, 235, 1)',
+      'rgba(255, 206, 86, 1)',
+      'rgba(75, 192, 192, 1)',
+      'rgba(153, 102, 255, 1)',
+      'rgba(255, 159, 64, 1)',
+      'rgba(255, 99, 132, 1)',
+      'rgba(255, 159, 64, 1)'
+    ],
+    borderWidth: 1
+  };
+  
+  var compliantData = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+    datasets: [{
+      label: "Compliant Devices",
+      data: [5, 15, 25, 20, 30, 35, 45],
+      backgroundColor: [
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+      borderColor: [
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+        'rgba(255, 99, 132, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+      borderWidth: 1
+    }]
+  };
+  
+  var enrollmentData = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+    datasets: [{
+      label: "Enrolled Devices",
+      data: [15, 25, 35, 30, 40, 45, 55],
+      backgroundColor: [
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+      borderColor: [
+        'rgba(54, 162, 235, 1)',
+        'rgba      'rgba(255, 206, 86, 1)',
+      'rgba(75, 192, 192, 1)',
+      'rgba(153, 102, 255, 1)',
+      'rgba(255, 159, 64, 1)',
+      'rgba(255, 99, 132, 1)',
+      'rgba(255, 159, 64, 1)'
+      ],
+      borderWidth: 1
+    }]
+  };
+  
+  var options = {
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero:true
+        }
+      }]
+    }
+  };
+  
+  var ctx = document.getElementById("registeredChart").getContext("2d");
+  var registeredChart = new Chart(ctx, {
+    type: 'bar',
+    data: registeredData,
+    options: options
+  });
+  
+  var ctx2 = document.getElementById("compliantChart").getContext("2d");
+  var compliantChart = new Chart(ctx2, {
+    type: 'bar',
+    data: compliantData,
+    options: options
+  });
+  
+  var ctx3 = document.getElementById("enrollmentChart").getContext("2d");
+  var enrollmentChart = new Chart(ctx3, {
+    type: 'bar',
+    data: enrollmentData,
+    options: options
+  });
+</script>
+ </body>
+</html>
+
