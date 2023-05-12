@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Lotto Generator</title>
+	<script>
+		function generateNumbers() {
+			var numbers = [];
+			var minNumber = 1;
+			var maxNumber = 50;
+			var numberOfNumbers = 7;
+
+			for (var i = 0; i < numberOfNumbers; i++) {
+				var randomNumber = Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+				numbers.push(randomNumber);
+			}
+
+			numbers.sort(function(a, b){return a-b});
+
+			var output = document.getElementById("output");
+			output.innerHTML = numbers.join(", ");
+		}
+	</script>
+</head>
+<body>
+	<h1>Lotto Generator</h1>
+	<button onclick="generateNumbers()">Generate Numbers</button>
+	<p>Your lucky numbers are: <span id="output"></span></p>
+</body>
+</html>
