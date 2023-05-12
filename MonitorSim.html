@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Network Traffic Monitoring Simulator</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: monospace;
+      font-size: 20px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="map"></canvas>
+  <script>
+    // Set up the canvas
+    const canvas = document.getElementById("map");
+    const ctx = canvas.getContext("2d");
+
+    // Define the data structure
+    const networkTrafficData = [
+      { source: "192.168.0.1", destination: "8.8.8.8", protocol: "TCP", data: 100, timestamp: "2023-04-26T10:30:00Z" },
+      { source: "192.168.0.2", destination: "10.0.0.1", protocol: "UDP", data: 50, timestamp: "2023-04-26T10:31:00Z" },
+      { source: "192.168.0.3", destination: "8.8.4.4", protocol: "TCP", data: 200, timestamp: "2023-04-26T10:32:00Z" }
+    ];
+
+    // Load the map image
+    const mapImage = new Image();
+    mapImage.src = "https://www.w3schools.com/w3images/map.jpg";
+    mapImage.onload = () => {
+      // Draw the map image
+      ctx.drawImage(mapImage, 0, 0, canvas.width, canvas.height);
+
+      // Set up the flashing points
+      let flashingPoints = [];
+      for (let i = 0; i < 500; i++) {
+        flashingPoints.push({
+          x: Math.floor(Math.random() * canvas.width),
+          y: Math.floor(Math.random() * canvas.height),
+          color: getRandomColor(),
+          isOn: false
+        });
+      }
+
+      // Start the animation loop
+      setInterval(() => {
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the map image
+        ctx.drawImage(mapImage, 0, 0, canvas.width, canvas.height);
+
+        // Draw the flashing points
+        flashingPoints.forEach(point => {
+          point.isOn = !point.isOn;
+
+          if (point.isOn) {
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = point.color;
+            ctx.fill();
+          }
+        });
+
+        // Draw the network traffic data
+        networkTrafficData.forEach(data => {
+          // Get the coordinates for the source and destination IPs
+          const sourceCoordinates = getCoordinatesForIP(data.source);
+          const destinationCoordinates = getCoordinatesForIP(data.destination);
+
+          // Draw a line between the source and destination IPs
+          ctx.beginPath();
+          ctx.moveTo(sourceCoordinates.x, sourceCoordinates.y);
+          ctx.lineTo(destinationCoordinates.x, destinationCoordinates.y);
+          ctx.strokeStyle = "red";
+          ctx.lineWidth = data.data / 50;
+          ctx.stroke();
+
+          // Draw a circle at the source IP location
+          ctx.beginPath();
+          ctx.arc(sourceCoordinates.x, sourceCoordinates.y, data.data / 100, 0, Math.PI * 2);
+      ctx.fillStyle = "red";
+      ctx.fill();
+
+      // Draw a circle at the destination IP location
+      ctx.beginPath();
+      ctx.arc(destinationCoordinates.x, destinationCoordinates.y, data.data / 100, 0, Math.PI * 2);
+      ctx.fillStyle = "green";
+      ctx.fill();
+
+      // Display the data in the console
+      console.log(`[${data.timestamp}] ${data.source} sent ${data.data} bytes of ${data.protocol} data to ${data.destination}`);
+    });
+  }, 1000 / 60);
+
+  // Helper function to get the coordinates for an IP address
+  function getCoordinatesForIP(ip) {
+    const ipToCoordsMap = {
+      "192.168.0.1": { x: 50, y: 50 },
+      "192.168.0.2": { x: 400, y: 200 },
+      "192.168.0.3": { x: 200, y: 400 },
+      "8.8.8.8": { x: 500, y: 50 },
+      "10.0.0.1": { x: 50, y: 500 },
+      "8.8.4.4": { x: 500, y: 500 }
+    };
+
+    return ipToCoordsMap[ip];
+  }
+
+  // Helper function to generate a random color
+  function getRandomColor() {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+};
+ </script>
+</body>
+</html>
