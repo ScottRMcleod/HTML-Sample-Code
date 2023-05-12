@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>NSW Tax Calculator</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script>
+		function calculateTax() {
+			const income = parseFloat(document.getElementById("income").value);
+			const partnerIncome = parseFloat(document.getElementById("partner-income").value);
+			const numberOfChildren = parseInt(document.getElementById("number-of-children").value);
+			const taxRate = 0.1;
+			const taxOffset = 1000;
+			let taxableIncome = income + partnerIncome;
+			if (numberOfChildren > 0) {
+				taxableIncome -= numberOfChildren * 1000;
+			}
+			let tax = (taxableIncome * taxRate) - taxOffset;
+			if (tax < 0) {
+				tax = 0;
+			}
+			const estimatedReturn = (tax > 0) ? (tax * 0.3) : 0;
+			document.getElementById("tax").value = tax.toFixed(2);
+			document.getElementById("return").value = estimatedReturn.toFixed(2);
+		}
+
+		document.getElementById("calculate-btn").addEventListener("click", calculateTax);
+	</script>
+</head>
+<body>
+	<div class="container mt-4">
+		<h1>NSW Tax Calculator</h1>
+		<form>
+			<div class="form-group">
+				<label for="income">Income:</label>
+				<input type="text" class="form-control" id="income" placeholder="Enter income" required>
+			</div>
+			<div class="form-group">
+				<label for="partner-income">Partner's Income:</label>
+				<input type="text" class="form-control" id="partner-income" placeholder="Enter partner's income" required>
+			</div>
+			<div class="form-group">
+				<label for="number-of-children">Number of Children:</label>
+				<input type="text" class="form-control" id="number-of-children" placeholder="Enter number of children" required>
+			</div>
+			<div class="form-group">
+				<label for="tax">Tax:</label>
+				<input type="text" class="form-control" id="tax" readonly>
+			</div>
+			<div class="form-group">
+				<label for="return">Estimated Tax Return:</label>
+				<input type="text" class="form-control" id="return" readonly>
+			</div>
+			<button type="button" class="btn btn-primary" id="calculate-btn">Calculate Tax</button>
+		</form>
+	</div>
+</body>
+</html>
