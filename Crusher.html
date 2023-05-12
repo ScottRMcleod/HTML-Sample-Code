@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Candy Crush Example</title>
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-PNplsrnn6hP/XfMw8LxnqLW6P15pO2XYfEBJqDy/6MKKnlytYiCqHpnw9Lgtw4fVU1Rlw7KzJAbFOQ4ag1pQQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha512-98jTih4PMaJZxKd91+9mnsj5BQhG6JNk1nkHxS36+bbdyprpSdSnbLw1IvS0Qv2X2g36qCxS6pYJ9u33FWsGvg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+canvas {
+        border: 1px solid black;
+      }
+      /* Candy styles */
+      .candy {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        border-radius: 25px;
+        background: linear-gradient(to bottom, #ff005b, #ff655b);
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+      }
+      .candy:before, .candy:after {
+        content: "";
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+      }
+
+      .candy:before {
+        top: 0;
+        left: 0;
+        background: linear-gradient(to bottom, #fff, #d6d6d6);
+      }
+
+      .candy:after {
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(to bottom, #fff, #d6d6d6);
+      }
+ .candy1 {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background: linear-gradient(to bottom, #0077ff, #00aaff);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+  .candy1:before, .candy1:after {
+        content: "";
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+      }
+.candy1:before {
+        top: 0;
+        left: 0;
+        background: linear-gradient(to bottom, #fff, #d6d6d6);
+      }
+.candy1:after {
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(to bottom, #fff, #d6d6d6);
+      }
+.candy2 {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background: linear-gradient(to bottom, #00ff6c, #00b33c);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+  .candy2:before, .candy2:after {
+        content: "";
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+      }
+.candy2:before {
+        top: 0;
+        left: 0;
+        background: linear-gradient(to bottom, #fff, #d6d6d6);
+      }
+.candy2:after {
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(to bottom, #fff, #d6d6d6);
+      }
+
+.candy3 {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background: linear-gradient(to bottom, #cc00ff, #9900cc);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+  .candy3:before, .candy3:after {
+        content: "";
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+      }
+.candy3:before {
+        top: 0;
+        left: 0;
+        background: linear-gradient(to bottom, #fff, #d6d6d6);
+      }
+.candy3:after {
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(to bottom, #fff, #d6d6d6);
+      }
+.candy4 {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background: linear-gradient(to bottom, #ff8800, #cc5500);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+  .candy4:before, .candy4:after {
+        content: "";
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+      }
+.candy4:before {
+        top: 0;
+        left: 0;
+        background: linear-gradient(to bottom, #fff, #d6d6d6);
+      }
+.candy4:after {
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(to bottom, #fff, #d6d6d6);
+      }
+
+.candy5 {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background: linear-gradient(to bottom, #ffff33, #cccc00);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+  .candy5:before, .candy5:after {
+        content: "";
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+      }
+.candy5:before {
+        top: 0;
+        left: 0;
+        background: linear-gradient(to bottom, #fff, #d6d6d6);
+      }
+.candy5:after {
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(to bottom, #fff, #d6d6d6);
+      }
+    </style>
+  </head>
+  <body>
+<div class="container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+	<th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row"></th>
+        <td class="candy"></td>
+        <td class="candy1"></td>
+	<td class="candy2"></td>
+        <td class="candy3"></td>
+        <td class="candy4"></td>
+	<td class="candy5"></td>
+        <td class="candy6"></td>
+	<td class="candy7"></td>
+      </tr>
+      <tr>
+	<th scope="row"></th>
+        <td class="candy1"></td>
+        <td class="candy2"></td>
+	<td class="candy3"></td>
+        <td class="candy4"></td>
+        <td class="candy5"></td>
+	<td class="candy5"></td>
+        <td class="candy6"></td>
+	<td class="candy7"></td>
+      </tr>
+      <tr>
+        <th scope="row"></th>
+        <td class="candy2"></td>
+        <td class="candy3"></td>
+	<td class="candy4"></td>
+        <td class="candy5"></td>
+        <td class="candy6"></td>
+	<td class="candy5"></td>
+        <td class="candy6"></td>
+	<td class="candy7"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+        <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/js/bootstrap.bundle.min.js" integrity="sha512-4DW9p0uN5sLxPjMWkUoLIRkwL5qJzf5Yfga8vQzQ+ivUv6pttXUOK+xYFp/jDiE7NMTJum3gMH3uQVnDz10wGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  </body>
+</html>
