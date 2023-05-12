@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Mobile Device Management Portal</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/easy-pie-chart/2.1.6/jquery.easypiechart.min.js"></script>
+  <style>
+    body {
+      padding-top: 70px;
+    }
+    .sidebar {
+      background-color: #f5f5f5;
+      height: 100%;
+      position: fixed;
+      left: 0;
+      overflow-x: hidden;
+      padding-top: 20px;
+      top: 51px;
+      transition: all 0.25s ease;
+      width: 0;
+      z-index: 1;
+    }
+    .collapsed #sidebar {
+      width: 60px;
+    }
+    .collapsed #main {
+      margin-left: 60px;
+    }
+    .nav-sidebar li a {
+      padding: 20px;
+    }
+    .nav-sidebar li a i {
+      font-size: 24px;
+    }
+    .nav-sidebar li.active a {
+      background-color: #e7e7e7;
+    }
+    .main {
+      transition: all 0.25s ease;
+    }
+    .percent {
+      display: block;
+      font-size: 48px;
+      margin-top: 24px;
+      text-align: center;
+    }
+  </style>
+  <script>
+    $(function() {
+      // Initialize the EasyPieChart instances
+      $('.easypiechart').easyPieChart({
+        barColor: '#428bca', // Set the color of the chart
+        lineWidth: 6, // Set the line width of the chart
+        size: 150 // Set the size of the chart
+      });
+
+      // Toggle the sidebar
+      $('#sidebar-toggle').on('click', function() {
+        var sidebarCollapsed = !$('#sidebar').hasClass('collapsed');
+        $('#sidebar').toggleClass('collapsed', sidebarCollapsed);
+        $('#main').toggleClass('col-md-12 col-md-9', sidebarCollapsed);
+      });
+    });
+  </script>
+</head>
+
+<body>
+  	<nav class="navbar navbar-default navbar-fixed-top">
+    	<div class="container-fluid">
+      		<div class="navbar-header">
+        		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+          			<span class="sr-only">Toggle navigation</span>
+          			<span class="icon-bar"></span>
+          			<span class="icon-bar"></span>
+          			<span class="icon-bar"></span>
+        		</button>
+        <a class="navbar-brand" href="#">Mobile Device Management Portal</a>
+      </div>
+      <div class="collapse navbar-collapse" id="navbar">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#">Reports</a></li>
+          <li><a href="#">Settings</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div id="wrapper">
+  	<div class="container-fluid">
+    		<div class="row">
+      			<div class="sidebar col-md-3" id="sidebar" aria-expanded="true">
+        			<ul class="nav nav-sidebar">
+          				<li class="active"><a href="#"><i class="glyphicon glyphicon-dashboard"></i> Dashboard</a></li>
+          				<li><a href="#"><i class="glyphicon glyphicon-phone"></i> Devices</a></li>
+          				<li><a href="#"><i class="glyphicon glyphicon-user"></i> Users</a></li>
+          				<li><a href="#"><i class="glyphicon glyphicon-wrench"></i> Policies</a></li>
+          				<li><a href="#"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
+        			</ul>
+      			</div>
+     		</div>
+     </div> 
+</div>
+	<div class="container">
+		<div id="main" class="main col-md-12">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-3">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Devices Managed</h3>
+							</div>		
+								<div class="panel-body">
+									<div class="easypiechart percent" data-percent="75">
+									<span class="percent">75%</span>
+									</div>
+								</div>
+						</div>
+					</div>
+				</div>
+			 </div>
+			</div>
+	</div>
+
+</body>
+</html>
