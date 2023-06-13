@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Interactive Three.js Scene</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-image: url('background.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      canvas { display: block; }
+    </style>
+  </head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+  <body>
+<div id="score" style="position: absolute; bottom: 10px; left: 550px; color: white; font-size: 24px;"></div>
+    <div id="menu" style="position: absolute; top: 10px; left: 10px;">
+      <button onclick="createLevel()">Create Level</button>
+      <button onclick="playLevel()">Play Level</button>
+      <button onclick="createTerrain()">Create Terrain</button>
+      <button onclick="createCylindar()">Create Cylidar</button>
+      <button onclick="createPyramid()">Create Pyramid</button>
+      <button onclick="playLevel()">Create FPS Game</button>
+      <button onclick="playLevel()">Create RPG Game</button>
+      <button onclick="playLevel()">Create Racing Game</button>
+      <button onclick="createPawn()">Create Chess Pawn</button>
+      <button onclick="createKing()">Create King</button>
+      <button onclick="createQueen()">Create Queen</button>
+      <button onclick="createHorse()">Create Horse</button>
+      <button onclick="createSpaceShip()">Create Space Ship</button>
+      <button onclick="Smothterrain()">Create terrain</button>
+      <button onclick="createPawn()">Create Chess Pawn</button>
+      <button onclick="createFPSLvl()">FPS</button>
+      <button onclick="CreateChessBoard()">Create Chess Board</button>
+      <button onclick="createDragon()">Create Dragon</button>
+<button onclick="createCastle()">Create Castle</button>
+ 
+
+
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+    <script>
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+
+      let isCreatingLevel = false;
+      let isPlaying = false;
+      let objectsToPlace = [];
+      let player;
+      let spheres = [];
+       let score = 0;
+      const scoreElement = document.getElementById('score');
+
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, opacity: 0.4, transparent: true });
+      const cube = new THREE.Mesh(geometry, material);
+      //scene.add(cube);
+
+      const groundGeometry = new THREE.PlaneGeometry(600, 600);
+      const groundMaterial = new THREE.MeshBasicMaterial({ color: 0x808080, opacity: 0.4, transparent: true, side: THREE.DoubleSide });
+      const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+      ground.rotation.x = Math.PI / 2;
+      ground.position.y = -0.5;
+      scene.add(ground);
+
+      const sphereGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+      const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff, opacity: 0.9, transparent: true });
+
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+      function createLevel() {
+        isCreatingLevel = true;
+        isPlaying = false;
+        objectsToPlace = [];
+
+        const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+        const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+        cylinder.position.set(-2, 0.5, 0);
+        objectsToPlace.push(cylinder);
+        scene.add(cylinder);
+
+        const pyramidGeometry = new THREE.ConeGeometry(0.5, 1, 4);
+        const pyramidMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        const pyramid = new THREE.Mesh(pyramidGeometry, pyramidMaterial);
+        pyramid.position.set(2, 0.5, 0);
+        objectsToPlace.push(pyramid);
+        scene.add(pyramid);
+    	
+	const enemyGeometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+    	const enemyMaterial = new THREE.MeshBasicMaterial({ color: 0xff00ff });
+    	const enemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
+    	enemy.position.set(0, 0.4, 2);
+    	objectsToPlace.push(enemy);
+    	scene.add(enemy);
+  }
+  function playLevel() {
+    isCreatingLevel = false;
+    isPlaying = true;
+    objectsToPlace.forEach(obj => scene.remove(obj));
+    objectsToPlace = [];
+
+    cube.position.set(0, 0.5, -4);
+    scene.add(cube);
+
+    score = 0;
+
+    for (let i = 0; i < 10; i++) {
+      const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      sphere.position.x = Math.random() * 10 - 5;
+      sphere.position.z = Math.random() * 10 - 5;
+      sphere.velocity = new THREE.Vector3((Math.random() - 0.5) * 0.1, 0, (Math.random() - 0.5) * 0.1);
+      scene.add(sphere);
+      spheres.push(sphere);
+    }
+  }
+function Smothterrain()
+{
+  // Create a terrain group to hold all the cubes
+  const terrainGroup = new THREE.Group();
+
+  // Define the size and resolution of the terrain grid
+  const gridSize = 10; // Number of cubes along each axis
+  const gridResolution = 32; // Number of subdivisions per cube
+
+  // Create a cube geometry for each grid cell
+  const cubeSize = gridSize / gridResolution;
+  const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+
+  // Loop through each grid cell and create a cube with height based on Perlin noise
+  for (let i = 0; i < gridSize; i++) {
+    for (let j = 0; j < gridSize; j++) {
+      // Calculate the height using Perlin noise
+      const noiseValue = noise.perlin2(i / 10, j / 10);
+      const height = (noiseValue + 1) * 1.5; // Adjust the scale and offset to desired height range
+
+      // Create a cube mesh with the calculated height
+      const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      cube.position.set(i - gridSize / 2, height / 2, j - gridSize / 2);
+
+      // Scale the cube vertically to represent the height
+      cube.scale.y = height;
+
+      // Add the cube to the terrain group
+      terrainGroup.add(cube);
+    }
+  }
+
+  // Add the terrain group to the scene
+  scene.add(terrainGroup);
+}
+//function createPlane() {
+//    const planeGeometry = new THREE.PlaneGeometry(10, 10);
+//    const planeMaterial = new THREE.MeshBasicMaterial({
+ //     color: 0x808080,
+      //opacity: 0.4,
+      //transparent: true,
+  //    side: THREE.DoubleSide
+   // });
+    //const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    //plane.rotation.x = Math.PI / 2;
+    //scene.add(plane);
+    //planes.push(plane);
+  //}
+
+
+
+// Create the castle
+function createCastle() {
+  // Create the castle base
+  var baseGeometry = new THREE.BoxGeometry(20, 2, 20);
+  var baseMaterial = new THREE.MeshPhongMaterial({ color: 0x696969 });
+  var base = new THREE.Mesh(baseGeometry, baseMaterial);
+  scene.add(base);
+
+  // Create the towers
+  var towerGeometry = new THREE.CylinderGeometry(2, 2, 10, 8);
+  var towerMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+
+  var tower1 = new THREE.Mesh(towerGeometry, towerMaterial);
+  tower1.position.x = -8;
+  tower1.position.y = 7;
+  tower1.position.z = -8;
+  scene.add(tower1);
+
+  var tower2 = new THREE.Mesh(towerGeometry, towerMaterial);
+  tower2.position.x = 8;
+  tower2.position.y = 7;
+  tower2.position.z = -8;
+  scene.add(tower2);
+
+  var tower3 = new THREE.Mesh(towerGeometry, towerMaterial);
+  tower3.position.x = -8;
+  tower3.position.y = 7;
+  tower3.position.z = 8;
+  scene.add(tower3);
+
+  var tower4 = new THREE.Mesh(towerGeometry, towerMaterial);
+  tower4.position.x = 8;
+  tower4.position.y = 7;
+  tower4.position.z = 8;
+  scene.add(tower4);
+
+  // Create the top of the towers
+  var topGeometry = new THREE.CylinderGeometry(2, 2, 2, 8);
+  var topMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+  var top = new THREE.Mesh(topGeometry, topMaterial);
+  top.position.y = 12;
+  scene.add(top);
+
+  // Create cubes on every second section
+  for (let i = 1; i <= 10; i += 2) {
+    var cubeGeometry = new THREE.BoxGeometry(2, 2, 2);
+    var cubeMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+    var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    cube.position.y = i;
+    scene.add(cube);
+  }
+
+  // Create the roof
+  var roofGeometry = new THREE.ConeGeometry(3.5, 5, 8);
+  var roofMaterial = new THREE.MeshPhongMaterial({ color: 0x800000 });
+
+  var roof1 = new THREE.Mesh(roofGeometry, roofMaterial);
+  roof1.position.y = 12;
+  scene.add(roof1);
+
+  var roof2 = new THREE.Mesh(roofGeometry, roofMaterial);
+  roof2.position.x = 16;
+  roof2.position.y = 12;
+  roof2.position.z = -8;
+  scene.add(roof2);
+
+  var roof3 = new THREE.Mesh(roofGeometry, roofMaterial);
+  roof3.position.x = -16;
+  roof3.position.y = 12;
+  roof3.position.z = 8;
+  scene.add(roof3);
+
+  var roof4 = new THREE.Mesh(roofGeometry, roofMaterial);
+  roof4.position.x = 16;
+  roof4.position.y = 12;
+  roof4.position.z = 8;
+  scene.add(roof4);
+
+  // Create the door
+  var doorGeometry = new THREE.BoxGeometry(3, 6, 0.2);
+  var doorMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+  var door = new THREE.Mesh(doorGeometry, doorMaterial);
+  door.position.y = -1;
+  door.position.z = 10.1;
+  scene.add(door);
+
+  // Create the windows
+  var windowGeometry = new THREE.BoxGeometry(2, 4, 0.2);
+  var windowMaterial = new THREE.MeshPhongMaterial({ color: 0xADD8E6 });
+
+  var window1 = new THREE.Mesh(windowGeometry, windowMaterial);
+  window1.position.x = -5.1;
+  window1.position.y = 5;
+  window1.position.z = 10.1;
+  scene.add(window1);
+
+  var window2 = new THREE.Mesh(windowGeometry, windowMaterial);
+  window2.position.x = 5.1;
+  window2.position.y = 5;
+  window2.position.z = 10.1;
+  scene.add(window2);
+
+  var window3 = new THREE.Mesh(windowGeometry, windowMaterial);
+  window3.position.x = -5.1;
+  window3.position.y = 5;
+  window3.position.z = -10.1;
+  scene.add(window3);
+
+  var window4 = new THREE.Mesh(windowGeometry, windowMaterial);
+  window4.position.x = 5.1;
+  window4.position.y = 5;
+  window4.position.z = -10.1;
+  scene.add(window4);
+
+  // Light source for better shading
+  var light = new THREE.DirectionalLight(0xffffff, 1);
+  light.position.set(0, 1, 0);
+  scene.add(light);
+}
+
+
+
+
+
+
+function createSpaceShip()
+{
+    // Create the UFO
+    var ufo = new THREE.Group();
+
+    // Bottom part of the UFO
+    var bottomGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.1, 32, 1, false);
+    var bottomMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+    var bottom = new THREE.Mesh(bottomGeometry, bottomMaterial);
+    bottom.rotation.y = Math.PI / 2;
+    ufo.add(bottom);
+
+    // Top part of the UFO
+    var topGeometry = new THREE.SphereGeometry(0.4, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2);
+    var topMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, opacity: 0.4, transparent: true, });
+    var top = new THREE.Mesh(topGeometry, topMaterial);
+    top.position.y = 0;
+    ufo.add(top);
+
+    // Light source for better shading
+    var light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(0, 0, 1);
+    scene.add(light);
+
+    scene.add(ufo);
+
+}
+
+function createDragon() {
+  // Create the dragon
+  var dragon = new THREE.Group();
+
+  // Body
+  var bodyGeometry = new THREE.BoxGeometry(2, 1, 4);
+  var bodyMaterial = new THREE.MeshPhongMaterial({ color: 0x960000 });
+  var body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+  dragon.add(body);
+
+  // Head
+  var headGeometry = new THREE.BoxGeometry(2.5, 2, 2.5);
+  var headMaterial = new THREE.MeshPhongMaterial({ color: 0x960000 });
+  var head = new THREE.Mesh(headGeometry, headMaterial);
+  head.position.y = 1.5;
+  dragon.add(head);
+
+  // Snout
+  var snoutGeometry = new THREE.BoxGeometry(1, 1, 1);
+  var snoutMaterial = new THREE.MeshPhongMaterial({ color: 0x960000 });
+  var snout = new THREE.Mesh(snoutGeometry, snoutMaterial);
+  snout.position.z = 1.25;
+  head.add(snout);
+
+  // Teeth
+  var toothGeometry = new THREE.BoxGeometry(0.05, 0.2, 0.05);
+  var toothMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
+  var leftTooth = new THREE.Mesh(toothGeometry, toothMaterial);
+  leftTooth.position.x = -0.45;
+  leftTooth.position.y = -0.1;
+  leftTooth.position.z = 0.45;
+  snout.add(leftTooth);
+
+  var rightTooth = new THREE.Mesh(toothGeometry, toothMaterial);
+  rightTooth.position.x = 0.45;
+  rightTooth.position.y = -0.1;
+  rightTooth.position.z = 0.45;
+  snout.add(rightTooth);
+
+  // Wings
+  var wingGeometry = new THREE.BoxGeometry(1, 0.1, 4);
+  var wingMaterial = new THREE.MeshPhongMaterial({ color: 0x960000 });
+  var leftWing = new THREE.Mesh(wingGeometry, wingMaterial);
+  leftWing.position.x = -1;
+  leftWing.position.y = 0.5;
+  leftWing.position.z = -1.5;
+  leftWing.rotation.x = -Math.PI / 4;
+  dragon.add(leftWing);
+
+  var rightWing = new THREE.Mesh(wingGeometry, wingMaterial);
+  rightWing.position.x = 1;
+  rightWing.position.y = 0.5;
+  rightWing.position.z = -1.5;
+  rightWing.rotation.x = -Math.PI / 4;
+  dragon.add(rightWing);
+
+  // Tail
+  var tailGeometry = new THREE.CylinderGeometry(0.5, 0.1, 3, 6);
+  var tailMaterial = new THREE.MeshPhongMaterial({ color: 0x960000 });
+  var tail = new THREE.Mesh(tailGeometry, tailMaterial);
+  tail.position.y = -0.5;
+  tail.position.z = -2.5;
+  dragon.add(tail);
+
+  // Light source for better shading
+  var light = new THREE.DirectionalLight(0xffffff, 1);
+  light.position.set(0, 0, 1);
+  scene.add(light);
+
+  scene.add(dragon);
+}
+
+function createFPSLvl()
+{
+  // Create the ground
+  var groundGeometry = new THREE.PlaneGeometry(100, 100);
+  var groundMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
+  var ground = new THREE.Mesh(groundGeometry, groundMaterial);
+  ground.rotation.x = -Math.PI / 2;
+  scene.add(ground);
+
+  // Create walls
+  var wallMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
+
+  var wall1Geometry = new THREE.BoxGeometry(20, 10, 1);
+  var wall1 = new THREE.Mesh(wall1Geometry, wallMaterial);
+  wall1.position.z = -10;
+  scene.add(wall1);
+
+  var wall2Geometry = new THREE.BoxGeometry(20, 10, 1);
+  var wall2 = new THREE.Mesh(wall2Geometry, wallMaterial);
+  wall2.position.z = 10;
+  scene.add(wall2);
+
+  var wall3Geometry = new THREE.BoxGeometry(1, 10, 20);
+  var wall3 = new THREE.Mesh(wall3Geometry, wallMaterial);
+  wall3.position.x = -10;
+  scene.add(wall3);
+
+  var wall4Geometry = new THREE.BoxGeometry(1, 10, 20);
+  var wall4 = new THREE.Mesh(wall4Geometry, wallMaterial);
+  wall4.position.x = 10;
+  scene.add(wall4);
+
+  // Create obstacles
+  var obstacleMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
+
+  var obstacle1Geometry = new THREE.BoxGeometry(2, 5, 2);
+  var obstacle1 = new THREE.Mesh(obstacle1Geometry, obstacleMaterial);
+  obstacle1.position.set(-5, 2.5, -5);
+  scene.add(obstacle1);
+
+  var obstacle2Geometry = new THREE.BoxGeometry(2, 5, 2);
+  var obstacle2 = new THREE.Mesh(obstacle2Geometry, obstacleMaterial);
+  obstacle2.position.set(5, 2.5, 5);
+  scene.add(obstacle2);
+
+  // Light source for better shading
+  var light = new THREE.DirectionalLight(0xffffff, 1);
+  light.position.set(0, 1, 0);
+  scene.add(light);
+}
+
+
+function createMountainTerrain() {
+  const width = 10;
+  const depth = 10;
+  const height = 2;
+  const segments = 100;
+  const smoothness = 1;
+
+  const terrainGroup = new THREE.Group();
+
+  const terrainGeometry = new THREE.BoxGeometry(width, height, depth, segments, segments, segments);
+  const noise = new THREE.SimplexNoise();
+  const noiseScale = 0.1;
+
+  // Displace vertices along the y-axis using noise
+  for (let i = 0; i < terrainGeometry.vertices.length; i++) {
+    const vertex = terrainGeometry.vertices[i];
+    const noiseValue = noise.noise3D(vertex.x * noiseScale, vertex.y * noiseScale, vertex.z * noiseScale);
+    vertex.y += noiseValue * smoothness;
+  }
+
+  terrainGeometry.computeVertexNormals();
+  const terrainMaterial = new THREE.MeshBasicMaterial({ color: 0x808080, wireframe: false });
+  const terrainMesh = new THREE.Mesh(terrainGeometry, terrainMaterial);
+  terrainGroup.add(terrainMesh);
+
+  scene.add(terrainGroup);
+}
+
+function createKing()
+{
+    // Create the king geometry
+    var kingGroup = new THREE.Group();
+
+    // Base of the king
+    var baseGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.2, 32);
+    var baseMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var base = new THREE.Mesh(baseGeometry, baseMaterial);
+    kingGroup.add(base);
+
+    // Middle section of the king
+    var middleGeometry = new THREE.CylinderGeometry(0.5, 0.4, 0.8, 32);
+    var middleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var middle = new THREE.Mesh(middleGeometry, middleMaterial);
+    middle.position.y = 0.6;
+    kingGroup.add(middle);
+
+    // Top section of the king
+    var topGeometry = new THREE.ConeGeometry(0.6, 0.6, 32);
+    var topMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var top = new THREE.Mesh(topGeometry, topMaterial);
+    top.position.y = 1.2;
+    kingGroup.add(top);
+
+    // Cross on top of the king
+    var crossGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.6, 32);
+    var crossMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    var cross = new THREE.Mesh(crossGeometry, crossMaterial);
+    cross.position.y = 1.5;
+    kingGroup.add(cross);
+
+    scene.add(kingGroup);
+}
+function createQueen()
+{
+    // Create the queen geometry
+    var queenGroup = new THREE.Group();
+
+    // Base of the queen
+    var baseGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.2, 32);
+    var baseMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var base = new THREE.Mesh(baseGeometry, baseMaterial);
+    queenGroup.add(base);
+
+    // Middle section of the queen
+    var middleGeometry = new THREE.CylinderGeometry(0.4, 0.6, 0.8, 32);
+    var middleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var middle = new THREE.Mesh(middleGeometry, middleMaterial);
+    middle.position.y = 0.6;
+    queenGroup.add(middle);
+
+    // Top section of the queen
+    var topGeometry = new THREE.ConeGeometry(0.4, 0.6, 32);
+    var topMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var top = new THREE.Mesh(topGeometry, topMaterial);
+    top.position.y = 1.2;
+    queenGroup.add(top);
+
+    // Crown of the queen
+    var crownGeometry = new THREE.CylinderGeometry(0.6, 0.4, 0.4, 32);
+    var crownMaterial = new THREE.MeshBasicMaterial({ color: 0xffd700 });
+    var crown = new THREE.Mesh(crownGeometry, crownMaterial);
+    crown.position.y = 1.4;
+    queenGroup.add(crown);
+
+    scene.add(queenGroup);
+}
+function createHorse()
+{
+
+    // Create the horse geometry
+    var horseGroup = new THREE.Group();
+
+    // Body of the horse
+    var bodyGeometry = new THREE.CylinderGeometry(0.4, 0.6, 1, 32);
+    var bodyMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    var body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+    horseGroup.add(body);
+
+    // Head of the horse
+    var headGeometry = new THREE.ConeGeometry(0.4, 0.6, 32);
+    var headMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    var head = new THREE.Mesh(headGeometry, headMaterial);
+    head.position.y = 0.9;
+    horseGroup.add(head);
+
+    scene.add(horseGroup);
+}
+function createBisip()
+{
+
+    // Create the bishop geometry
+    var bishopGroup = new THREE.Group();
+
+    // Base of the bishop
+    var baseGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.2, 32);
+    var baseMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var base = new THREE.Mesh(baseGeometry, baseMaterial);
+    bishopGroup.add(base);
+
+    // Middle section of the bishop
+    var middleGeometry = new THREE.CylinderGeometry(0.3, 0.4, 0.4, 32);
+    var middleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var middle = new THREE.Mesh(middleGeometry, middleMaterial);
+    middle.position.y = 0.3;
+    bishopGroup.add(middle);
+
+    // Top section of the bishop
+    var topGeometry = new THREE.ConeGeometry(0.4, 0.5, 32);
+    var topMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var top = new THREE.Mesh(topGeometry, topMaterial);
+    top.position.y = 0.7;
+    bishopGroup.add(top);
+
+    scene.add(bishopGroup);
+}
+function createRooke()
+{
+    // Create the rook geometry
+    var rookGroup = new THREE.Group();
+
+    // Base of the rook
+    var baseGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.2, 32);
+    var baseMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var base = new THREE.Mesh(baseGeometry, baseMaterial);
+    rookGroup.add(base);
+
+    // Middle section of the rook
+    var middleGeometry = new THREE.CylinderGeometry(0.3, 0.4, 0.4, 32);
+    var middleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var middle = new THREE.Mesh(middleGeometry, middleMaterial);
+    middle.position.y = 0.3;
+    rookGroup.add(middle);
+
+    // Top section of the rook
+    var topGeometry = new THREE.CylinderGeometry(0.4, 0.5, 0.4, 32);
+    var topMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var top = new THREE.Mesh(topGeometry, topMaterial);
+    top.position.y = 0.7;
+    rookGroup.add(top);
+
+    scene.add(rookGroup);
+}
+function createPawn()
+{
+ // Create the pawn geometry
+    var pawnGroup = new THREE.Group();
+
+    // Base of the pawn
+    var baseGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.2, 32);
+    var baseMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var base = new THREE.Mesh(baseGeometry, baseMaterial);
+    pawnGroup.add(base);
+
+    // Head of the pawn
+    var headGeometry = new THREE.ConeGeometry(0.4, 0.6, 32);
+    var headMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    var head = new THREE.Mesh(headGeometry, headMaterial);
+    head.position.y = 0.4;
+    pawnGroup.add(head);
+
+    scene.add(pawnGroup);
+}
+
+function CreateChessBoard()
+{
+    // Create the chessboard
+    var boardSize = 8;
+    var squareSize = 1;
+    var board = new THREE.Group();
+
+    for (var row = 0; row < boardSize; row++) {
+      for (var col = 0; col < boardSize; col++) {
+        var squareColor = (row + col) % 2 === 0 ? 0xffffff : 0x808080;
+        var squareGeometry = new THREE.BoxGeometry(squareSize, squareSize, 0.1);
+        var squareMaterial = new THREE.MeshBasicMaterial({ color: squareColor });
+        var square = new THREE.Mesh(squareGeometry, squareMaterial);
+        square.position.set(col - (boardSize / 2) + 0.5, row - (boardSize / 2) + 0.5, 0);
+        board.add(square);
+      }
+    }
+
+    scene.add(board);
+
+    // Create the chess pieces
+    var pieces = new THREE.Group();
+
+    // Create the pawns
+    for (var col = 0; col < boardSize; col++) {
+      var pawnGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 32);
+      var pawnMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+      var pawn = new THREE.Mesh(pawnGeometry, pawnMaterial);
+      pawn.position.set(col - (boardSize / 2) + 0.5, -2.5, 0.15);
+      pieces.add(pawn);
+    }
+
+    // Create the other pieces
+    var piecePositions = [
+      ['rook', -3.5, -3.5],
+      ['knight', -2.5, -3.5],
+      ['bishop', -1.5, -3.5],
+      ['queen', -0.5, -3.5],
+      ['king', 0.5, -3.5],
+      ['bishop', 1.5, -3.5],
+      ['knight', 2.5, -3.5],
+      ['rook', 3.5, -3.5]
+    ];
+
+    for (var i = 0; i < piecePositions.length; i++) {
+      var pieceType = piecePositions[i][0];
+      var pieceX = piecePositions[i][1];
+      var pieceY = piecePositions[i][2];
+
+      var pieceGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.1, 32);
+      var pieceMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+      var piece = new THREE.Mesh(pieceGeometry, pieceMaterial);
+      piece.position.set(pieceX, pieceY, 0.15);
+      pieces.add(piece);
+    }
+
+    scene.add(pieces);
+}
+  function createPyramid(){
+  const pyramidGeometry = new THREE.ConeGeometry(0.5, 1, 4);
+  const pyramidMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+  const pyramid = new THREE.Mesh(pyramidGeometry, pyramidMaterial);
+  pyramid.position.set(2, 0.5, 0);
+  objectsToPlace.push(pyramid);
+  scene.add(pyramid);
+
+}
+  function createCylindar(){
+const cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
+        const cylinderMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+        cylinder.position.set(-2, 0.5, 0);
+        objectsToPlace.push(cylinder);
+        scene.add(cylinder);
+}
+
+  function handleMouseDown(event) {
+    if (!isCreatingLevel) return;
+
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+
+    const intersects = raycaster.intersectObjects(objectsToPlace);
+    if (intersects.length > 0) {
+      const object = intersects[0].object.clone();
+      object.position.copy(intersects[0].point);
+      objectsToPlace.push(object);
+      scene.add(object);
+    }
+  }
+
+  function handleKeyDown(event) {
+    if (!isPlaying) return;
+
+    const moveDistance = 0.7;
+
+    switch (event.key) {
+      case 'ArrowUp':
+        cube.position.z -= moveDistance;
+        break;
+      case 'ArrowDown':
+        cube.position.z += moveDistance;
+        break;
+      case 'ArrowLeft':
+        cube.position.x -= moveDistance;
+        break;
+      case 'ArrowRight':
+        cube.position.x += moveDistance;
+        break;
+      case ' ':
+        cube.position.y += moveDistance;
+        break;
+    }
+  }
+
+  function updateSpherePositions() {
+    spheres.forEach(sphere => {
+      sphere.position.add(sphere.velocity);
+
+      if (sphere.position.y < 0.1 || sphere.position.y > 2) {
+        sphere.velocity.y *= -1;
+      }
+    });
+  }
+
+  function checkSphereCollision() {
+    for (let i = 0; i < spheres.length; i++) {
+      const sphere = spheres[i];
+      if (sphere.visible && cube.position.distanceTo(sphere.position) < 0.5) {
+        sphere.visible = false;
+        score++;
+scoreElement.textContent = 'Score: ' + score;
+        console.log('Score:', score);
+      }
+    }
+  }
+
+function animate() {
+        requestAnimationFrame(animate);
+        checkSphereCollision();
+     
+         for (let i = 0; i < spheres.length; i++) {
+    const sphere = spheres[i];
+    const velocity = sphere.velocity;
+
+    // Update sphere position based on velocity
+    sphere.position.add(velocity);
+
+    // Apply gravity
+    velocity.y -= 0.01;
+
+    // Check for collision with ground
+    if (sphere.position.y < 0.1) {
+      sphere.position.y = 0.1;
+      velocity.y *= -0.9; // Reverse velocity and apply damping
+    }
+
+    // Check for collision with walls
+    if (sphere.position.x < -4.5 || sphere.position.x > 4.5) {
+      velocity.x *= -1; // Reverse velocity
+     // sphere.material.color.setHex(Math.random() * 0xffffff); // Random color
+    }
+
+    if (sphere.position.z < -4.5 || sphere.position.z > 4.5) {
+      velocity.z *= -1; // Reverse velocity
+      //sphere.material.color.setHex(Math.random() * 0xffffff); // Random color
+    }
+    }
+        renderer.render(scene, camera);
+      }
+
+  function init() {
+    camera.position.z = 5;
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('keydown', handleKeyDown);
+    animate();
+  }
+
+  init();
+</script>
+</body>
+</html>
